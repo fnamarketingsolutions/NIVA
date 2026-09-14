@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import wearDior1 from '../assets/wear-dior1.mp4'
-import wearDior2 from '../assets/wear-dior2.mp4'
+import wearDior1 from '../assets/niva1.mp4'
+import wearDior2 from '../assets/niva2.mp4'
 import wearDior3 from '../assets/wear-dior3.mp4'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -42,17 +42,20 @@ export default function TheRituals() {
       const pin = pinRef.current
       if (!pin || layers.length === 0) return
 
-      // Initial state
+      // Initial state: horizontal capsule with zoomed-in video
       layers.forEach((layer) => {
         const videoWrapper = layer.querySelector('.ritual-video-wrapper')
+        const video = layer.querySelector('.ritual-video')
         const overlay = layer.querySelector('.ritual-overlay')
         const text = layer.querySelector('.ritual-text-content')
 
         gsap.set(videoWrapper, {
-          scale: 0.85,
+          width: '52%',
+          height: '38%',
+          borderRadius: 9999,
           opacity: 0,
-          borderRadius: '2rem',
         })
+        gsap.set(video, { scale: 1.25 })
         gsap.set(overlay, { opacity: 0 })
         gsap.set(text, { y: 40, opacity: 0 })
       })
@@ -70,8 +73,10 @@ export default function TheRituals() {
 
       layers.forEach((layer, i) => {
         const videoWrapper = layer.querySelector('.ritual-video-wrapper')
+        const video = layer.querySelector('.ritual-video')
         const overlay = layer.querySelector('.ritual-overlay')
         const text = layer.querySelector('.ritual-text-content')
+        const enterAt = i === 0 ? 'start' : `step-${i}+=0.2`
 
         // Fade out previous slide
         if (i > 0) {
@@ -90,27 +95,38 @@ export default function TheRituals() {
           )
         }
 
-        // Animate current slide in
+        // Capsule → rectangle: expand frame + zoom out video
         tl.to(
           videoWrapper,
           {
-            opacity: 1,
-            scale: 1,
+            width: '100%',
+            height: '100%',
             borderRadius: '1rem',
+            opacity: 1,
             duration: 1,
             ease: 'power2.out',
           },
-          i === 0 ? 'start' : `step-${i}+=0.2`
+          enterAt
         )
+          .to(
+            video,
+            {
+              scale: 1,
+              duration: 1,
+              ease: 'power2.out',
+            },
+            enterAt
+          )
+          // Overlay + copy after the frame has mostly opened
           .to(
             overlay,
             { opacity: 0.45, duration: 0.5, ease: 'none' },
-            '-=0.5'
+            '-=0.35'
           )
           .to(
             text,
             { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' },
-            '-=0.4'
+            '-=0.25'
           )
 
         // Hold pause between steps
@@ -152,32 +168,34 @@ export default function TheRituals() {
             className="absolute inset-0 flex items-center justify-center p-4 md:p-8"
             style={{ zIndex: idx + 1 }}
           >
-            {/* Responsive Video Frame - shows full video without over-cropping */}
-            <div className="ritual-video-wrapper relative flex h-full w-full max-h-[82vh] max-w-5xl items-center justify-center overflow-hidden rounded-2xl shadow-2xl">
-              <video
-                src={item.videoSrc}
-                poster={item.poster}
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="h-full w-full object-contain md:object-cover" 
-              />
+            {/* Final size shell — capsule expands to 100% of this frame */}
+            <div className="relative flex h-full w-full max-h-[82vh] max-w-5xl items-center justify-center">
+              <div className="ritual-video-wrapper relative overflow-hidden shadow-2xl">
+                <video
+                  src={item.videoSrc}
+                  poster={item.poster}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="ritual-video h-full w-full object-cover"
+                />
 
-              {/* Tint overlay for contrast */}
-              <div className="ritual-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/40" />
+                {/* Tint overlay for contrast */}
+                <div className="ritual-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/40" />
 
-              {/* Text content inside the card frame */}
-              <div className="ritual-text-content absolute bottom-8 left-0 right-0 z-10 mx-auto max-w-2xl px-6 text-center text-white md:bottom-16">
-                <span className="text-3xl font-light tracking-widest text-[#f5d0d8] md:text-5xl">
-                  {item.step}
-                </span>
-                <h3 className="mt-2 text-2xl font-light md:text-4xl">
-                  {item.title}
-                </h3>
-                <p className="mx-auto mt-3 max-w-lg text-sm font-light leading-relaxed text-white/90 md:text-base">
-                  {item.desc}
-                </p>
+                {/* Text content inside the card frame */}
+                <div className="ritual-text-content absolute bottom-8 left-0 right-0 z-10 mx-auto max-w-2xl px-6 text-center text-white md:bottom-16">
+                  <span className="text-3xl font-light tracking-widest text-[#f5d0d8] md:text-5xl">
+                    {item.step}
+                  </span>
+                  <h3 className="mt-2 text-2xl font-light md:text-4xl">
+                    {item.title}
+                  </h3>
+                  <p className="mx-auto mt-3 max-w-lg text-sm font-light leading-relaxed text-white/90 md:text-base">
+                    {item.desc}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
