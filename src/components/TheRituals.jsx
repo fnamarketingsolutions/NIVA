@@ -3,7 +3,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import wearDior1 from '../assets/niva1.mp4'
 import wearDior2 from '../assets/niva2.mp4'
-import wearDior3 from '../assets/wear-dior3.mp4'
+import wearDior3 from '../assets/niva3.mp4'
 
 gsap.registerPlugin(ScrollTrigger)
 
