@@ -77,13 +77,26 @@ export default function Navbar() {
 
         <button
           type="button"
-          aria-label="Toggle menu"
-          className="flex flex-col gap-1.5 md:hidden"
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          aria-expanded={open}
+          className="relative flex h-6 w-6 flex-col items-center justify-center md:hidden"
           onClick={() => setOpen((v) => !v)}
         >
-          <span className="block h-0.5 w-6 bg-deep" />
-          <span className="block h-0.5 w-6 bg-deep" />
-          <span className="block h-0.5 w-6 bg-deep" />
+          <span
+            className={`absolute block h-0.5 w-6 bg-deep transition-transform duration-300 ease-out ${
+              open ? 'translate-y-0 rotate-45' : '-translate-y-1.5'
+            }`}
+          />
+          <span
+            className={`absolute block h-0.5 w-6 bg-deep transition-opacity duration-300 ease-out ${
+              open ? 'opacity-0' : 'opacity-100'
+            }`}
+          />
+          <span
+            className={`absolute block h-0.5 w-6 bg-deep transition-transform duration-300 ease-out ${
+              open ? 'translate-y-0 -rotate-45' : 'translate-y-1.5'
+            }`}
+          />
         </button>
       </div>
 
